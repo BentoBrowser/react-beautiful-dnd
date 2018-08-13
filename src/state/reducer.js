@@ -91,7 +91,7 @@ const moveWithPositionUpdates = ({
   const newImpact: DragImpact =
     impact ||
     getDragImpact({
-      pageBorderBoxCenter: page.borderBoxCenter,
+      pageBorderBoxCenter: page.selection,
       draggable: state.dimensions.draggables[state.critical.draggable.id],
       draggables: state.dimensions.draggables,
       droppables: state.dimensions.droppables,
