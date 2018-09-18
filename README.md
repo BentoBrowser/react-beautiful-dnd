@@ -522,10 +522,10 @@ type Hooks = {|
   onDragEnd: OnDragEndHook,
 |};
 
-type OnBeforeDragStartHook = (start: DragStart) => void;
-type OnDragStartHook = (start: DragStart, provided: HookProvided) => void;
-type OnDragUpdateHook = (update: DragUpdate, provided: HookProvided) => void;
-type OnDragEndHook = (result: DropResult, provided: HookProvided) => void;
+type OnBeforeDragStartHook = (start: DragStart) => mixed;
+type OnDragStartHook = (start: DragStart, provided: HookProvided) => mixed;
+type OnDragUpdateHook = (update: DragUpdate, provided: HookProvided) => mixed;
+type OnDragEndHook = (result: DropResult, provided: HookProvided) => mixed;
 
 type Props = {|
   ...Hooks,
@@ -758,7 +758,7 @@ Unfortunately we are [unable to apply this optimisation for you](https://medium.
 
 `Draggable` components can be dragged around and dropped onto `Droppable`s. A `Draggable` must always be contained within a `Droppable`. It is **possible** to reorder a `Draggable` within its home `Droppable` or move to another `Droppable`. It is **possible** because a `Droppable` is free to control what it allows to be dropped on it.
 
-Every `Draggable` has a _drag handle_. A _drag handle_ is the element that the user interacts with in order to drag a `Draggable`. A _drag handle_ can be a the `Draggable` element itself, or a child of the `Draggable`.
+Every `Draggable` has a _drag handle_. A _drag handle_ is the element that the user interacts with in order to drag a `Draggable`. A _drag handle_ can be a the `Draggable` element itself, or a child of the `Draggable`. Note that by default a _drag handle_ cannot be an interactive element, since [event handlers are blocked on nested interactive elements](#interactive-child-elements-within-a-draggable). Proper semantics for accessibility are added to the _drag handle_ element. If you wish to use an interactive element, `disableInteractiveElementBlocking` must be set.
 
 ```js
 import { Draggable } from 'react-beautiful-dnd';
@@ -786,7 +786,11 @@ import { Draggable } from 'react-beautiful-dnd';
   this.props.items.map((item, index) => (
     <Draggable draggableId={item.id} index={index}>
       {(provided, snapshot) => (
-        <div ref={provided.innerRef} {...provided.draggableProps}>
+        <div
+          ref={provided.innerRef}
+          {...provided.draggableProps}
+          {...provided.dragHandleProps}
+        >
           {item.content}
         </div>
       )}
@@ -1113,7 +1117,7 @@ When dragging a `Draggable` we leave behind a _placeholder_ `React.Element` to m
 
 ### Adding an `onClick` handler to a `Draggable` or a _drag handle_
 
-You are welcome to add your own `onClick` handler to a `Draggable` or a _drag handle_ (which might be the same element). `onClick` events handlers will always be called if a click occurred. If we are preventing the click then we the `event.defaultPrevented` property will be set to `true`. We prevent click events from occurring when the user was dragging an item. See [#sloppy-clicks-and-click-prevention-](sloppy clicks and click prevention) for more information.
+You are welcome to add your own `onClick` handler to a `Draggable` or a _drag handle_ (which might be the same element). `onClick` events handlers will always be called if a click occurred. If we are preventing the click then we the `event.defaultPrevented` property will be set to `true`. We prevent click events from occurring when the user was dragging an item. See [sloppy clicks and click prevention](#sloppy-clicks-and-click-prevention-) for more information.
 
 ### Interactive child elements within a `Draggable`
 
@@ -1291,13 +1295,13 @@ Great care has been taken to keep the library as light as possible. It is curren
 
 This library supports the standard [Atlassian supported browsers](https://confluence.atlassian.com/cloud/supported-browsers-744721663.html) for desktop:
 
-| Desktop                              | Version                                              |
-| ------------------------------------ | ---------------------------------------------------- |
-| Microsoft Internet Explorer(Windows) | Version 11                                           |
-| Microsoft Edge                       | Latest stable version supported                      |
-| Mozilla Firefox (all platforms)      | Latest stable version supported                      |
-| Google Chrome (Windows and Mac)      | Latest stable version supported                      |
-| Safari (Mac)                         | Latest stable version on latest OS release supported |
+| Desktop                              | Version                                                                                                                                                      |
+| ------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Microsoft Internet Explorer(Windows) | Version 11 (Need to [polyfill `Array.prototype.find`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/find#Polyfill)) |
+| Microsoft Edge                       | Latest stable version supported                                                                                                                              |
+| Mozilla Firefox (all platforms)      | Latest stable version supported                                                                                                                              |
+| Google Chrome (Windows and Mac)      | Latest stable version supported                                                                                                                              |
+| Safari (Mac)                         | Latest stable version on latest OS release supported                                                                                                         |
 
 | Mobile                   | Version                                                   |
 | ------------------------ | --------------------------------------------------------- |
