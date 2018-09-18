@@ -2287,7 +2287,7 @@
 	      previousDroppableOverId = _ref2.previousDroppableOverId;
 	  var maybe = toDroppableList(droppables).filter(function (droppable) {
 	    return droppable.isEnabled;
-	  }).find(function (droppable) {
+	  }).filter(function (droppable) {
 	    var withPlaceholder = getClippedRectWithPlaceholder({
 	      draggable: draggable,
 	      draggables: draggables,
@@ -2300,6 +2300,18 @@
 	    }
 
 	    return isPositionInFrame(withPlaceholder)(target);
+	  }).sort(function (a, b) {
+	    if (a.client.contentBox[a.axis.size] < b.client.contentBox[b.axis.size]) {
+	      return -1;
+	    }
+
+	    if (a.client.contentBox[a.axis.size] > b.client.contentBox[b.axis.size]) {
+	      return 1;
+	    }
+
+	    return 0;
+	  }).find(function (droppable) {
+	    return !!droppable;
 	  });
 	  return maybe ? maybe.descriptor.id : null;
 	});
@@ -5862,7 +5874,7 @@
 	  };
 
 	  _proto.componentWillUnmount = function componentWillUnmount() {
-	    window.addEventListener('error', this.onWindowError);
+	    window.removeEventListener('error', this.onWindowError);
 	    var state = this.store.getState();
 
 	    if (state.phase !== 'IDLE') {
@@ -9583,6 +9595,9 @@
 	  });
 	};
 
+	var sharedOptions = {
+	  capture: true
+	};
 	var createPostDragEventPreventer = (function (getWindow) {
 	  var isBound = false;
 
@@ -9592,9 +9607,7 @@
 	    }
 
 	    isBound = true;
-	    bindEvents(getWindow(), pointerEvents, {
-	      capture: true
-	    });
+	    bindEvents(getWindow(), pointerEvents, sharedOptions);
 	  };
 
 	  var unbind = function unbind() {
@@ -9603,9 +9616,7 @@
 	    }
 
 	    isBound = false;
-	    unbindEvents(getWindow(), pointerEvents, {
-	      capture: true
-	    });
+	    unbindEvents(getWindow(), pointerEvents, sharedOptions);
 	  };
 
 	  var pointerEvents = [{

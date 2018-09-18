@@ -1,4 +1,4 @@
-![react beautiful dnd](https://raw.githubusercontent.com/alexreardon/files/master/resources/react-beautiful-dnd-logo.png)
+This is a fork of [`react-beautiful-dnd`](https://github.com/atlassian/react-beautiful-dnd/blob/master/.size-snapshot.json) that supports dragging children from/into parent lists. This allows it to be used for dragging in trees instead of just lists and boards. To use it in your own packages:
 
 # react-beautiful-dnd
 
@@ -1322,3 +1322,12 @@ Jared Crowe - [@jaredjcrowe](https://twitter.com/jaredjcrowe)
 Bogdan Chadkin - [@IAmTrySound](https://twitter.com/IAmTrySound)
 Luke Batchelor - [@alukebatchelor](https://twitter.com/alukebatchelor)
 Many other [@Atlassian](https://twitter.com/Atlassian)'s!
+=======
+```json
+{
+  "dependencies": {
+    "react-beautiful-dnd": "ianstormtaylor/react-beautiful-dnd#release"
+  }
+}
+```
+>>>>>>> 82e0f24b4a30962fb8c977b48d41a60347708fdb

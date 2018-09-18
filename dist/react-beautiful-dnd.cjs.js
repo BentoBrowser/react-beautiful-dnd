@@ -367,7 +367,7 @@ var getDroppableOver = (function (_ref2) {
       previousDroppableOverId = _ref2.previousDroppableOverId;
   var maybe = toDroppableList(droppables).filter(function (droppable) {
     return droppable.isEnabled;
-  }).find(function (droppable) {
+  }).filter(function (droppable) {
     var withPlaceholder = getClippedRectWithPlaceholder({
       draggable: draggable,
       draggables: draggables,
@@ -380,6 +380,18 @@ var getDroppableOver = (function (_ref2) {
     }
 
     return isPositionInFrame(withPlaceholder)(target);
+  }).sort(function (a, b) {
+    if (a.client.contentBox[a.axis.size] < b.client.contentBox[b.axis.size]) {
+      return -1;
+    }
+
+    if (a.client.contentBox[a.axis.size] > b.client.contentBox[b.axis.size]) {
+      return 1;
+    }
+
+    return 0;
+  }).find(function (droppable) {
+    return !!droppable;
   });
   return maybe ? maybe.descriptor.id : null;
 });
@@ -3917,7 +3929,7 @@ var DragDropContext = function (_React$Component) {
   };
 
   _proto.componentWillUnmount = function componentWillUnmount() {
-    window.addEventListener('error', this.onWindowError);
+    window.removeEventListener('error', this.onWindowError);
     var state = this.store.getState();
 
     if (state.phase !== 'IDLE') {
@@ -4916,6 +4928,9 @@ var unbindEvents = function unbindEvents(el, bindings, sharedOptions) {
   });
 };
 
+var sharedOptions = {
+  capture: true
+};
 var createPostDragEventPreventer = (function (getWindow) {
   var isBound = false;
 
@@ -4925,9 +4940,7 @@ var createPostDragEventPreventer = (function (getWindow) {
     }
 
     isBound = true;
-    bindEvents(getWindow(), pointerEvents, {
-      capture: true
-    });
+    bindEvents(getWindow(), pointerEvents, sharedOptions);
   };
 
   var unbind = function unbind() {
@@ -4936,9 +4949,7 @@ var createPostDragEventPreventer = (function (getWindow) {
     }
 
     isBound = false;
-    unbindEvents(getWindow(), pointerEvents, {
-      capture: true
-    });
+    unbindEvents(getWindow(), pointerEvents, sharedOptions);
   };
 
   var pointerEvents = [{
